@@ -126,7 +126,7 @@ public:
 
 private:
     int32_t setup_timer(int32_t msec, int32_t repeat, timer_event_t cb);
-    void setup_timer(impl::timer_t::ptr& timer);
+    void setup_timer(timer_t::ptr& timer);
 
     // timer schedule task thread.
     void schedule();
@@ -139,8 +139,8 @@ private:
     // calc timer expired time.
     int64_t calc_expired_time(int32_t msec);
 
-    void get_expired_timers(impl::expired_timer_buckets& timers);
-    void process_expired_timers(impl::expired_timer_buckets& timers);
+    void get_expired_timers(expired_timer_buckets& timers);
+    void process_expired_timers(expired_timer_buckets& timers);
 
     int64_t get_min_expired_time();
 
@@ -155,9 +155,9 @@ private:
     std::thread schedule_thd_;
 
     // key: expired time.
-    impl::expired_timer_buckets bucket_timers_;
+    expired_timer_buckets bucket_timers_;
     // key: timer id.
-    impl::id_timers id_timers_;
+    id_timers id_timers_;
 
     // timer id alloced start number.
     std::atomic_int id_{ 0 };
@@ -176,8 +176,8 @@ private:
 inline int64_t timer_mgr::calc_expired_time(int32_t msec)
 {
     // timeout = (msec + now_time)/accuracy_ * accuracy_;
-    //return (impl::now_msec_time() + msec) / accuracy_ * accuracy_;
-    return impl::tick_count() + msec;
+    //return (now_msec_time() + msec) / accuracy_ * accuracy_;
+    return tick_count() + msec;
 }
 
 inline int32_t timer_mgr::create_timer(int32_t msec, timer_event_t cb)
@@ -213,7 +213,7 @@ inline int32_t timer_mgr::setup_timer(int32_t msec, int32_t repeat,
 
     auto timer_id = alloc_timerid();
 
-    auto timer = std::make_shared<impl::timer_t>();
+    auto timer = std::make_shared<timer_t>();
     timer->timer_id = timer_id;
     timer->repeat = repeat;
     timer->msec = msec;
@@ -228,7 +228,7 @@ inline int32_t timer_mgr::setup_timer(int32_t msec, int32_t repeat,
     return timer_id;
 }
 
-inline void timer_mgr::setup_timer(impl::timer_t::ptr& timer)
+inline void timer_mgr::setup_timer(timer_t::ptr& timer)
 {
     id_timers_[timer->timer_id] = timer;
     bucket_timers_[timer->expires].emplace_back(timer);
@@ -246,9 +246,9 @@ inline void timer_mgr::schedule()
 {
     while (!stop_.load())
     {
-        if (impl::tick_count() >= get_min_expired_time())
+        if (tick_count() >= get_min_expired_time())
         {
-            impl::expired_timer_buckets timers;
+            expired_timer_buckets timers;
             get_expired_timers(timers);
 
             process_expired_timers(timers);
@@ -287,10 +287,10 @@ inline void timer_mgr::run_timer_event()
     }
 }
 
-inline void timer_mgr::get_expired_timers(impl::expired_timer_buckets& timers)
+inline void timer_mgr::get_expired_timers(expired_timer_buckets& timers)
 {
     std::lock_guard<std::mutex> lock(schedule_mtx_);
-    auto now = impl::tick_count();
+    auto now = tick_count();
 
     auto it = bucket_timers_.begin();
     while (it != bucket_timers_.end())
@@ -305,15 +305,14 @@ inline void timer_mgr::get_expired_timers(impl::expired_timer_buckets& timers)
     }
 }
 
-inline void timer_mgr::process_expired_timers(
-    impl::expired_timer_buckets& timers)
+inline void timer_mgr::process_expired_timers(expired_timer_buckets& timers)
 {
     if (timers.empty())
     {
         return;
     }
 
-    auto now = impl::tick_count();
+    auto now = tick_count();
     decltype(timer_events_) timers_cb;
 
     // pick timers callback.
