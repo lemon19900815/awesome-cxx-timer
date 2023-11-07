@@ -1,6 +1,6 @@
 # cxx-timer
 
-Awsome cpp timer: A C++11 cross-platform single-header timer library .
+Awesome cpp timer: A C++11 cross-platform single-header timer library.
 
 **features:**
 
@@ -8,7 +8,16 @@ Awsome cpp timer: A C++11 cross-platform single-header timer library .
 2. high-precision(average delay within 1ms)
 3. easy to use(just include the `cxx-timer.h`)
 
-## 1. timer interface
+
+
+## 1. design
+
+1. On Windows, after `std::this_thread::sleep_for` some milliseconds, the thread is resumed, but the time is passed more than the sleep time. I use the `condition_variable` to simulate it.
+2. the `time_event_t` callback is run on another thread to avoiding prolonged execution of callbacks that impact timer accuracy.
+
+
+
+## 2. timer interface
 
 ```c++
 // the timer callback function signature.
@@ -35,9 +44,9 @@ public:
 
 
 
-## 2. usage
+## 3. usage
 
-### 2.1 create once timer
+### 3.1 create once timer
 
 ```c++
 using namespace utility::timer;
@@ -48,7 +57,9 @@ timer_iface::get().create_timer(msec, []() {
 });
 ```
 
-### 2.2 create repeat timer
+
+
+### 3.2 create repeat timer
 
 ```c++
 using namespace utility::timer;
@@ -60,7 +71,9 @@ timer_iface::get().create_repeat_timer(msec, repeat, []() {
 });
 ```
 
-### 2.3 cancel timer
+
+
+### 3.3 cancel timer
 
 ```c++
 using namespace utility::timer;
@@ -77,8 +90,9 @@ timer_iface::get().cancel_timer(id);
 
 
 
-## 3. unit-test
+## 4. unit-test
 
 use `doctest.h` to do unit test.
+
 
 
