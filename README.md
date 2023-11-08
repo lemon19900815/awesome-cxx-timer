@@ -2,7 +2,7 @@
 
 Awesome cpp timer: A C++11 cross-platform single-header timer library.
 
-**features:**
+**Features:**
 
 1. thread-safe
 2. high-precision(average delay within 1ms)
@@ -10,14 +10,14 @@ Awesome cpp timer: A C++11 cross-platform single-header timer library.
 
 
 
-## 1. design
+## 1. Design
 
-1. On Windows, after `std::this_thread::sleep_for` some milliseconds, the thread is resumed, but the time is passed more than the sleep time. I use the `condition_variable` to simulate it.
-2. the `time_event_t` callback is run on another thread to avoiding prolonged execution of callbacks that impact timer accuracy.
+1. On Windows and Linux, after `std::this_thread::sleep_for` some milliseconds, the thread is resumed, but the passed period is more than sleep time. Using `condition_variable` replace `sleep_for`.
+2. The `time_event_t` callback is run on another thread to avoiding slow execution of callbacks that impact timer accuracy.
 
 
 
-## 2. timer interface
+## 2. Interface
 
 ```c++
 // the timer callback function signature.
@@ -44,7 +44,7 @@ public:
 
 
 
-## 3. usage
+## 3. Usage
 
 ### 3.1 create once timer
 
@@ -90,9 +90,20 @@ timer_iface::get().cancel_timer(id);
 
 
 
-## 4. unit-test
+## 4. Test
 
-use `doctest.h` to do unit test.
+use `doctest.h` to do test, please see test.cpp.
 
 
+
+## 5. Reference
+
+1. https://zhuanlan.zhihu.com/p/400200921?utm_id=0
+
+
+
+## 6. Future
+
+- [ ] modify thread priority.
+- [ ] modify thread affinity.
 
