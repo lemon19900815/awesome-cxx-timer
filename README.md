@@ -40,6 +40,9 @@ public:
     // get interface implement.
     static timer_iface& get();
 };
+
+// get interface implement.
+static timer_iface& get_timer_iface();
 ```
 
 
@@ -52,7 +55,7 @@ public:
 using namespace utility::timer;
 
 auto msec = 10;
-timer_iface::get().create_timer(msec, []() {
+get_timer_iface().create_timer(msec, []() {
     std::cout << "timer fired." << std::endl;
 });
 ```
@@ -66,7 +69,7 @@ using namespace utility::timer;
 
 auto msec = 10;
 auto repeat = 100;
-timer_iface::get().create_repeat_timer(msec, repeat, []() {
+get_timer_iface().create_repeat_timer(msec, repeat, []() {
     std::cout << "timer fired." << std::endl;
 });
 ```
@@ -80,7 +83,7 @@ using namespace utility::timer;
 
 auto msec = 10;
 auto repeat = 100;
-auto id = timer_iface::get().create_repeat_timer(msec, repeat, []() {
+auto id = get_timer_iface().create_repeat_timer(msec, repeat, []() {
     std::cout << "timer fired." << std::endl;
 });
 
