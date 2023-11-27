@@ -10,7 +10,7 @@ using namespace utility::timer;
 TEST_CASE("test timer_iface::create_timer")
 {
     auto msec = 10;
-    std::atomic_bool timer_fired = false;
+    std::atomic_bool timer_fired { false };
     auto id = get_timer_iface().create_timer(msec, [&timer_fired]()
     {
         timer_fired.store(true);
