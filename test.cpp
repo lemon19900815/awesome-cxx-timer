@@ -26,7 +26,7 @@ TEST_CASE("test timer_iface::create_repeat_timer")
     auto msec = 10;
     auto repeat = 10;
 
-    std::atomic_int fired_count = 0;
+    std::atomic_int fired_count { 0 };
     auto id = get_timer_iface().create_repeat_timer(msec, repeat, [&fired_count]()
     {
         fired_count.store(fired_count.load() + 1);
@@ -43,7 +43,7 @@ TEST_CASE("test timer_iface::cancel_timer")
     auto msec = 10;
     auto repeat = 10;
 
-    std::atomic_int fired_count = 0;
+    std::atomic_int fired_count { 0 };
     auto id = get_timer_iface().create_repeat_timer(msec, repeat, [&fired_count]()
     {
         // nothing to do.
