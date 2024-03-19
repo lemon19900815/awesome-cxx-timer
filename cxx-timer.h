@@ -1,6 +1,6 @@
 ﻿/*
 
-Copyright (c) 2023-2033 lemon19900815@buerjia
+Copyright (c) 2024 lemon19900815@buerjia
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -239,10 +239,7 @@ inline void timer_mgr::setup_timer(timer_t::ptr& timer)
 
 inline int32_t timer_mgr::alloc_timerid()
 {
-    auto timerid = id_.load() + 1;
-    id_.store(timerid);
-
-    return timerid;
+    return id_.fetch_add(1);
 }
 
 inline void timer_mgr::schedule()
