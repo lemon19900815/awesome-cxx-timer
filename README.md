@@ -36,9 +36,6 @@ public:
                                         timer_event_t cb) = 0;
     // cancel a timer with id.
     virtual bool cancel_timer(int32_t timer_id) = 0;
-
-    // get interface implement.
-    static timer_iface& get();
 };
 
 // get interface implement.
