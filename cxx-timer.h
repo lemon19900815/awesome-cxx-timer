@@ -59,16 +59,16 @@ public:
                                         timer_event_t cb) = 0;
     // cancel a timer with id.
     virtual bool cancel_timer(int32_t timer_id) = 0;
-};
 
-// get interface implement.
-static timer_iface& get_timer_iface();
+    // singleton interface.
+    static timer_iface& get();
+};
 
 ////////////////////////////////////////////////////////////////////////
 
 
 // timer_iface implement.
-namespace impl
+namespace detail
 {
 
 struct timer_t
@@ -395,12 +395,12 @@ inline void timer_mgr::sleep_ms(int32_t msec)
 
     sleep_cv_.wait_until(lock, expired_time);
 }
-} // namespace impl
+} // namespace detail
 
 // hide in end of this file.
-static timer_iface& get_timer_iface()
+inline timer_iface& timer_iface::get()
 {
-    static impl::timer_mgr mgr;
+    static detail::timer_mgr mgr;
     return mgr;
 }
 
